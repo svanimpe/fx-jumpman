@@ -1,8 +1,7 @@
 package objects;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.TimelineBuilder;
-import javafx.event.ActionEvent;
+import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -57,16 +56,11 @@ public class Jumpman extends GameObject implements EventHandler<KeyEvent> {
                 setSmall();
                 invincible = true;
                 getNode().setOpacity(0.5);
-                TimelineBuilder.create()
-                        .keyFrames(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent t) {
-                                invincible = false;
-                                getNode().setOpacity(1);
-                            }
-                        }))
-                        .build()
-                        .play();
+                var timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+                    invincible = false;
+                    getNode().setOpacity(1);
+                }));
+                 timeline.play();
             } else {
                 state = new Dead(this);
             }

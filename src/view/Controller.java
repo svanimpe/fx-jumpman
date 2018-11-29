@@ -11,11 +11,11 @@ public class Controller implements EventHandler<KeyEvent> {
     public void handle(KeyEvent t) {
         
         if (t.getCode() == KeyCode.ESCAPE && t.getEventType() == KeyEvent.KEY_PRESSED) {
-            View v = View.getInstance();
-            if (v.getHelp().isShowing()) {
-                v.getHelp().hide();
+            var view = View.getInstance();
+            if (view.getHelp().isShowing()) {
+                view.getHelp().hide();
             } else {
-                v.getHelp().show();
+                view.getHelp().show();
             }
         } else if (t.getCode() == KeyCode.R && t.getEventType() == KeyEvent.KEY_PRESSED) {
             View.getInstance().getHelp().show();

@@ -8,7 +8,7 @@ public class BottomCenterBinding implements NodeBinding {
 
     @Override
     public void bind(Node node, DoubleProperty x, DoubleProperty y) {
-        View view = View.getInstance();
+        var view = View.getInstance();
         
         double width = node.getBoundsInLocal().getWidth();
         double height = node.getBoundsInLocal().getHeight();

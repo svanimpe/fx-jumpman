@@ -5,13 +5,10 @@ import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.animation.TimelineBuilder;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.util.Duration;
 import objects.Fireball;
 import objects.Goal;
@@ -77,15 +74,7 @@ public class World {
     /* GAME LOOP */
     
     private final Duration frameLength = Duration.millis(1000 / 50);
-    private final Timeline loop = TimelineBuilder.create()
-            .cycleCount(Animation.INDEFINITE)
-            .keyFrames(new KeyFrame(frameLength, new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent t) {
-                    update();
-                }
-            }))
-            .build();
+    private final Timeline loop = new Timeline(new KeyFrame(frameLength, event -> update()));
     
     private boolean paused = true;
     
@@ -113,7 +102,7 @@ public class World {
         
         View.getInstance().scrollWindow();
         
-        List<Fireball> toRemove = new ArrayList<>();
+        var toRemove = new ArrayList<Fireball>();
         for (Fireball f : fireballs) {
             if (jumpman.getNode().getBoundsInParent().intersects(f.getNode().getBoundsInParent())) {
                 jumpman.takeHit();
@@ -125,7 +114,7 @@ public class World {
         }
         fireballs.removeAll(toRemove);
         
-        List<Launch> launches = level.getLaunchesForX(View.getInstance().getX() + View.WIDTH.get());
+        var launches = level.getLaunchesForX(View.getInstance().getX() + View.WIDTH.get());
         for (Launch l : launches) {
             fireballs.add(new Fireball(new Vector2D(l.getX(), l.getY()), new Vector2D(l.getVelocity(), 0)));
         }
@@ -142,7 +131,9 @@ public class World {
     
     private static final World instance = new World();
     
-    private World() { }
+    private World() {
+        loop.setCycleCount(Animation.INDEFINITE);
+    }
     
     public static World getInstance() {
         return instance;

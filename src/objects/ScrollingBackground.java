@@ -21,17 +21,17 @@ public class ScrollingBackground {
     }
     
     private void bindNode() {
-        final View v = View.getInstance();
+        final var view = View.getInstance();
         
         node.translateXProperty().bind(new DoubleBinding() {
 
             {
-                super.bind(v.xProperty());
+                super.bind(view.xProperty());
             }
             
             @Override
             protected double computeValue() {
-                double offset = v.getX() % View.WIDTH.get();
+                double offset = view.getX() % View.WIDTH.get();
                 if (offset < 0) {
                     offset += View.WIDTH.get();
                 }
@@ -39,6 +39,6 @@ public class ScrollingBackground {
             }
         });
         
-        node.translateYProperty().bind(new SimpleDoubleProperty(32).add(v.yProperty()));
+        node.translateYProperty().bind(new SimpleDoubleProperty(32).add(view.yProperty()));
     }
 }

@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Level implements Serializable {
 
@@ -24,9 +25,7 @@ public class Level implements Serializable {
         this.length = length >= 100 ? length : 100;
         
         this.launches = new ArrayList<>();
-        for (Launch launch : launches) {
-            this.launches.add(launch);
-        }
+        this.launches.addAll(launches);
     }
 
     public String getName() {
@@ -38,19 +37,14 @@ public class Level implements Serializable {
     }
     
     public List<Launch> getLaunchesForX(double x) {
-        List<Launch> toLaunch = new ArrayList<>();
-        for (Launch l : launches) {
-            if (l.getX() <= x) {
-                toLaunch.add(l);
-            }
-        }
+        var toLaunch = launches.stream().filter(launch -> launch.getX() <= x).collect(Collectors.toList());
         launches.removeAll(toLaunch);
         return toLaunch;
     }
     
     public static Level fromFile(String fileName) {
         Level level = null;
-        try (ObjectInputStream in = new ObjectInputStream(Level.class.getResourceAsStream("/resources/levels/" + fileName))) {
+        try (var in = new ObjectInputStream(Level.class.getResourceAsStream("/resources/levels/" + fileName))) {
             level = (Level)in.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();

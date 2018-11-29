@@ -15,7 +15,7 @@ public class JumpmanApp extends Application {
         View.getInstance().initializeView();
         View.getInstance().loadView();
         
-        Scene scene = new Scene(View.getInstance().getRoot(), View.WIDTH.get() * 2, View.HEIGHT.get() * 2);
+        var scene = new Scene(View.getInstance().getRoot(), View.WIDTH.get() * 2, View.HEIGHT.get() * 2);
 
         stage.setScene(scene);
         stage.setTitle("Jumpman (" + World.getInstance().getLevel().getName() + ")");

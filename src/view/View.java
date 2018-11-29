@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextBuilder;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import objects.Fireball;
@@ -63,7 +62,7 @@ public class View {
     }
     
     public void scrollWindow() {
-        Jumpman jm = World.getInstance().getJumpman();
+        var jm = World.getInstance().getJumpman();
         
         if (jm.getPosition().getX() - x.get() > LIMIT_HIGH.get()) {
             x.set(x.get() + (jm.getPosition().getX() - x.get() - LIMIT_HIGH.get()));
@@ -86,7 +85,7 @@ public class View {
         root = new AnchorPane();
         view = new Group();
         
-        Scale viewScale = Transform.scale(1, 1, 0, 0);
+        var viewScale = Transform.scale(1, 1, 0, 0);
         viewScale.xProperty().bind(root.widthProperty().divide(View.WIDTH));
         viewScale.yProperty().bind(root.heightProperty().divide(View.HEIGHT));
         view.getTransforms().add(viewScale);
@@ -96,20 +95,19 @@ public class View {
         
         root.getChildren().add(view);
         
-        Text info = TextBuilder.create()
-                .text("Esc: Help\nR: Reset")
-                .font(Font.font("Arial", FontWeight.BOLD, 16))
-                .fill(Color.WHITE)
-                .build();
+        var info = new Text("Esc: Help\nR: Reset");
+        info.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        info.setFill(Color.WHITE);
+        
         AnchorPane.setTopAnchor(info, 20.0);
         AnchorPane.setRightAnchor(info, 20.0);
         
         root.getChildren().add(info);
         
-        Text time = TextBuilder.create()
-                .font(Font.font("Arial", FontWeight.BOLD, 16))
-                .fill(Color.WHITE)
-                .build();
+        var time = new Text();
+        time.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        time.setFill(Color.WHITE);
+                
         time.textProperty().bind(Bindings.concat("Time: ", Bindings.format("%.2f", World.getInstance().levelTimeProperty()), " seconds"));
         
         AnchorPane.setTopAnchor(time, 20.0);
@@ -126,28 +124,25 @@ public class View {
     }
     
     public void loadView() {
-        World w = World.getInstance();
+        var w = World.getInstance();
         
         view.getChildren().add(w.getBackground().getNode());
         view.getChildren().add(w.getGoal().getNode());
         view.getChildren().add(w.getJumpman().getNode());
 
-        for (Fireball f : w.getFireballs()) {
-            view.getChildren().add(f.getNode());
-        }
+        w.getFireballs().forEach(fireball ->
+            view.getChildren().add(fireball.getNode())
+        );
         
-        w.getFireballs().addListener(new ListChangeListener<Fireball>() {
-            @Override
-            public void onChanged(Change<? extends Fireball> change) {
-                while (change.next()) {
-                    for (Fireball f : change.getAddedSubList()) {
-                        view.getChildren().add(f.getNode());
-                    }
-                    for (Fireball f : change.getRemoved()) {
-                        view.getChildren().remove(f.getNode());
-                    }
-                }
-            } 
+        w.getFireballs().addListener((Change<? extends Fireball> change) -> {
+            while (change.next()) {
+                change.getAddedSubList().forEach(fireball -> 
+                    view.getChildren().add(fireball.getNode())
+                );
+                change.getRemoved().forEach(fireball ->
+                    view.getChildren().remove(fireball.getNode())
+                );
+            }
         });
         
         x.set(-80);
